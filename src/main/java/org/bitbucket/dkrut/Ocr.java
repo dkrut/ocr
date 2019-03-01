@@ -12,17 +12,20 @@ public class Ocr {
 
     public static void main(String[] args) {
 
-        File output = new File("src/main/resources/testFiles/");
-//        System.out.println(output.listFiles().length);
+        File outputDir = new File("src/main/resources/testFiles/");
+        File[] outputFiles = outputDir.listFiles();
+//        System.out.println(outputDir.listFiles().length);
 
         Tesseract instance = new Tesseract();
         instance.setDatapath("src/main/resources/tessdata");
         instance.setLanguage("rus+eng");
 
-        File outputfile = new File(output + "\\test.png");
-
         try {
-            System.out.println(instance.doOCR(outputfile));
+            if (outputDir.length() != 0) {
+                for (File ocrResult : outputFiles) {
+                    System.out.println(instance.doOCR(ocrResult));
+                }
+            }
         } catch (TesseractException e) {
             System.err.println("Error while reading image " + e.getMessage());
         }
