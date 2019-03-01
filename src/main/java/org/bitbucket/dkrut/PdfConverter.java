@@ -15,7 +15,7 @@ import java.util.List;
 public class PdfConverter {
     public void pdfConvert() {
 
-        String sourceDir = "src/main/resources/test1.pdf";
+        String sourceDir = "src/main/resources/pdf/test.pdf";
         String destinationDir = "src/main/resources/testFiles";
         File sourceFile = new File(sourceDir);
         File destinationFile = new File(destinationDir);
