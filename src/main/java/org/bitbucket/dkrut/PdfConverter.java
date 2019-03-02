@@ -16,13 +16,13 @@ public class PdfConverter {
     public void pdfConvert() {
 
         String sourceDir = "src/main/resources/pdf/test.pdf";
-        String destinationDir = "src/main/resources/testFiles";
+        String tempDir = "src/main/resources/temp";
         File sourceFile = new File(sourceDir);
-        File destinationFile = new File(destinationDir);
+        File tempFolder = new File(tempDir);
 
         try {
-            if (!destinationFile.exists()) {
-                destinationFile.mkdir();
+            if (!tempFolder.exists()) {
+                tempFolder.mkdir();
             }
             if (sourceFile.exists()) {
                 PDDocument document = PDDocument.load(sourceDir);
@@ -33,7 +33,7 @@ public class PdfConverter {
                 //convert pdf to png, adding index to all pages
                 for (PDPage page : list) {
                     BufferedImage image = page.convertToImage();
-                    File outputfile = new File(destinationDir + "/" + fileName + "_" + pageNumber + ".png");
+                    File outputfile = new File(tempDir + "/" + fileName + "_" + pageNumber + ".png");
                     ImageIO.write(image, "png", outputfile);
                     pageNumber++;
                 }
