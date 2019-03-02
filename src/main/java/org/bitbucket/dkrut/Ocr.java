@@ -5,7 +5,9 @@ import net.sourceforge.tess4j.TesseractException;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Properties;
 
 /**
  * Created by Denis Krutikov on 26.02.2019.
@@ -13,7 +15,15 @@ import java.io.IOException;
 
 public class Ocr {
 
-    public static void main(String[] args) {
+        public static void main(String[] args) {
+
+        Properties tesseractProperties = new Properties();
+        try {
+            FileInputStream fis = new FileInputStream("src/main/resources/tesseract.properties");
+            tesseractProperties.load(fis);
+        } catch (IOException e){
+            System.err.println("Error while reading Tesseract properties: " + e.getMessage());
+        }
 
         File outputDir = new File("src/main/resources/testFiles/");
         File tempFolder = new File("src/main/resources/temp");
@@ -23,7 +33,7 @@ public class Ocr {
 
         Tesseract instance = new Tesseract();
         instance.setDatapath("src/main/resources/tessdata");
-        instance.setLanguage("rus+eng");
+        instance.setLanguage(tesseractProperties.getProperty("language"));
 
         try {
 
