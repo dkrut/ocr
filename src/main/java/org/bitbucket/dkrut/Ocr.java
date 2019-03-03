@@ -15,7 +15,7 @@ import java.util.Properties;
 
 public class Ocr {
 
-        public static void main(String[] args) {
+    public static void main(String[] args) {
 
         Properties tesseractProperties = new Properties();
         try {
@@ -25,7 +25,7 @@ public class Ocr {
             System.err.println("Error while reading Tesseract properties: " + e.getMessage());
         }
 
-        File outputDir = new File("src/main/resources/testFiles/");
+        File sourceDir = new File("src/main/resources/testFiles");
         File tempFolder = new File("src/main/resources/temp");
 
         PdfConverter pdfConverter = new PdfConverter();
@@ -35,28 +35,29 @@ public class Ocr {
         instance.setDatapath("src/main/resources/tessdata");
         instance.setLanguage(tesseractProperties.getProperty("language"));
 
-        try {
 
-            if (!tempFolder.exists()) {
-                tempFolder.mkdir();
-            }
+        if (sourceDir.list() != null) {
+            try {
 
-            FileUtils.copyDirectory(outputDir, tempFolder);
-            File[] outputTempFiles = tempFolder.listFiles();
-//            System.out.println(tempFolder.listFiles().length);
+                if (!tempFolder.exists()) {
+                    tempFolder.mkdir();
+                }
 
-            if (outputDir.length() != 0) {
+                FileUtils.copyDirectory(sourceDir, tempFolder);
+                File[] outputTempFiles = tempFolder.listFiles();
+
+                assert outputTempFiles != null;
                 for (File ocrResult : outputTempFiles) {
                     System.out.println(instance.doOCR(ocrResult));
                 }
+
+                FileUtils.forceDelete(tempFolder);
+
+            } catch (TesseractException e) {
+                System.err.println("Error while reading image: " + e.getMessage());
+            } catch (IOException e) {
+                System.err.println("Error while coping output dir: " + e.getMessage());
             }
-
-            FileUtils.forceDelete(tempFolder);
-
-        } catch (TesseractException e) {
-            System.err.println("Error while reading image: " + e.getMessage());
-        } catch (IOException e) {
-            System.err.println("Error while coping output dir: " + e.getMessage());
         }
     }
 }

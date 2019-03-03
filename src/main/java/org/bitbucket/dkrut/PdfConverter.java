@@ -18,15 +18,15 @@ public class PdfConverter {
         File sourcePdfDir = new File("src/main/resources/pdf");
         File tempFolder = new File("src/main/resources/temp");
 
-        try {
-            if (!tempFolder.exists()) {
-                tempFolder.mkdir();
-            }
+        if (sourcePdfDir.listFiles() != null) {
+            try {
+                File[] sourceTempFiles = sourcePdfDir.listFiles();
 
-            File[] sourceTempFiles = sourcePdfDir.listFiles();
+                if (!tempFolder.exists()) {
+                    tempFolder.mkdir();
+                }
 
-            assert sourceTempFiles != null;
-            if (sourceTempFiles.length != 0){
+                assert sourceTempFiles != null;
                 for (File tempDocument : sourceTempFiles) {
                     PDDocument document = PDDocument.load(tempDocument);
                     List<PDPage> list = document.getDocumentCatalog().getAllPages();
@@ -42,9 +42,10 @@ public class PdfConverter {
                     }
                     document.close();
                 }
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }
