@@ -3,6 +3,7 @@ package org.bitbucket.dkrut;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,12 +30,10 @@ public class Ocr {
         File tempFolder = new File("src/main/resources/temp");
 
         PdfConverter pdfConverter = new PdfConverter();
-        pdfConverter.pdfConvert();
 
         Tesseract instance = new Tesseract();
         instance.setDatapath("src/main/resources/tessdata");
         instance.setLanguage(tesseractProperties.getProperty("language"));
-
 
         if (sourceDir.list() != null) {
             try {
@@ -43,7 +42,15 @@ public class Ocr {
                     tempFolder.mkdir();
                 }
 
-                FileUtils.copyDirectory(sourceDir, tempFolder);
+                File[] sourceDirFiles = sourceDir.listFiles();
+                assert sourceDirFiles != null;
+                for (File checkingFile : sourceDirFiles) {
+                    String fileNameWithExtension = checkingFile.toString();
+                    if (FilenameUtils.getExtension(fileNameWithExtension).equals("pdf")){
+                        pdfConverter.pdfConvert(checkingFile);
+                    } else FileUtils.copyFileToDirectory(checkingFile, tempFolder);
+                }
+
                 File[] outputTempFiles = tempFolder.listFiles();
 
                 assert outputTempFiles != null;
