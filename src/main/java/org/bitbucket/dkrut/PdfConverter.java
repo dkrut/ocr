@@ -15,31 +15,34 @@ import java.util.List;
 public class PdfConverter {
     public void pdfConvert() {
 
-        String sourceDir = "src/main/resources/pdf/test.pdf";
-        String tempDir = "src/main/resources/temp";
-        File sourceFile = new File(sourceDir);
-        File tempFolder = new File(tempDir);
+        File sourceFile = new File("src/main/resources/pdf");
+        File tempFolder = new File("src/main/resources/temp");
 
         try {
             if (!tempFolder.exists()) {
                 tempFolder.mkdir();
             }
-            if (sourceFile.exists()) {
-                PDDocument document = PDDocument.load(sourceDir);
-                List<PDPage> list = document.getDocumentCatalog().getAllPages();
 
-                String fileName = sourceFile.getName().replace(".pdf", ""); //get file name without extension
-                int pageNumber = 1;
-                //convert pdf to png, adding index to all pages
-                for (PDPage page : list) {
-                    BufferedImage image = page.convertToImage();
-                    File outputfile = new File(tempDir + "/" + fileName + "_" + pageNumber + ".png");
-                    ImageIO.write(image, "png", outputfile);
-                    pageNumber++;
+            File[] sourceTempFiles = sourceFile.listFiles();
+
+            assert sourceTempFiles != null;
+            if (sourceTempFiles.length != 0) {
+
+                for (File tempDocument : sourceTempFiles) {
+                    PDDocument document = PDDocument.load(tempDocument);
+                    List<PDPage> list = document.getDocumentCatalog().getAllPages();
+
+                    String fileName = tempDocument.getName().replace(".pdf", ""); //get file name without extension
+                    int pageNumber = 1;
+                    //convert pdf to png, adding index to all pages
+                    for (PDPage page : list) {
+                        BufferedImage image = page.convertToImage();
+                        File outputfile = new File(tempFolder.getPath() + "/" + fileName + "_" + pageNumber + ".png");
+                        ImageIO.write(image, "png", outputfile);
+                        pageNumber++;
+                    }
+                    document.close();
                 }
-                document.close();
-            } else {
-                System.err.println(sourceFile.getName() +" - file not exists");
             }
         } catch (Exception e) {
             e.printStackTrace();
