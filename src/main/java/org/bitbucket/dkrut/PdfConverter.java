@@ -26,21 +26,22 @@ public class PdfConverter {
             File[] sourceTempFiles = sourcePdfDir.listFiles();
 
             assert sourceTempFiles != null;
+            if (sourceTempFiles.length != 0){
+                for (File tempDocument : sourceTempFiles) {
+                    PDDocument document = PDDocument.load(tempDocument);
+                    List<PDPage> list = document.getDocumentCatalog().getAllPages();
 
-            for (File tempDocument : sourceTempFiles) {
-                PDDocument document = PDDocument.load(tempDocument);
-                List<PDPage> list = document.getDocumentCatalog().getAllPages();
-
-                String fileName = tempDocument.getName().replace(".pdf", ""); //get file name without extension
-                int pageNumber = 1;
-                //convert pdf to png, adding index to all pages
-                for (PDPage page : list) {
-                    BufferedImage image = page.convertToImage();
-                    File outputfile = new File(tempFolder.getPath() + "/" + fileName + "_" + pageNumber + ".png");
-                    ImageIO.write(image, "png", outputfile);
-                    pageNumber++;
+                    String fileName = tempDocument.getName().replace(".pdf", ""); //get file name without extension
+                    int pageNumber = 1;
+                    //convert pdf to png, adding index to all pages
+                    for (PDPage page : list) {
+                        BufferedImage image = page.convertToImage();
+                        File outputfile = new File(tempFolder.getPath() + "/" + fileName + "_" + pageNumber + ".png");
+                        ImageIO.write(image, "png", outputfile);
+                        pageNumber++;
+                    }
+                    document.close();
                 }
-                document.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
