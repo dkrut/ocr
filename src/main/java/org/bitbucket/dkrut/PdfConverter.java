@@ -1,5 +1,6 @@
 package org.bitbucket.dkrut;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.slf4j.Logger;
@@ -16,18 +17,22 @@ import java.util.List;
  */
 
 public class PdfConverter {
-    public void pdfConvert(File pdfFile) {
+    private Logger log = LoggerFactory.getLogger(PdfConverter.class);
 
-        Logger log = LoggerFactory.getLogger(org.bitbucket.dkrut.PdfConverter.class);
+    public void pdfConvert(File pdfFile) {
 
         File tempFolder = new File("src/main/resources/temp");
 
         if (pdfFile.exists()) {
             try {
-                if (!tempFolder.exists()) {
-                    tempFolder.mkdir();
-                    log.info("Temp folder created");
+                if (tempFolder.exists()) {
+                    log.warn("Previous temp folder is exist. Trying to delete");
+                    FileUtils.forceDelete(tempFolder);
+                    log.info("Previous temp folder deleted");
                 }
+                tempFolder.mkdir();
+                log.info("Temp folder created");
+
                 log.info("Start convert " + pdfFile.getName() + " to PNG image");
                 PDDocument document = PDDocument.load(pdfFile);
                 List<PDPage> list = document.getDocumentCatalog().getAllPages();
