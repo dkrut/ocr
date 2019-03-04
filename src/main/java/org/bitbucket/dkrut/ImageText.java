@@ -16,7 +16,7 @@ public class ImageText {
 
     public static void main(String[] args) {
 
-        Logger log = LoggerFactory.getLogger(asd.class);
+        Logger log = LoggerFactory.getLogger(ImageText.class);
 
         Ocr ocr = new Ocr();
         PdfConverter pdfConverter = new PdfConverter();
