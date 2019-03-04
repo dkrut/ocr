@@ -16,11 +16,11 @@ import java.util.Properties;
  * Created by Denis Krutikov on 26.02.2019.
  */
 
-public class Ocr {
+public class ImageText {
 
     public static void main(String[] args) {
 
-        Logger log = LoggerFactory.getLogger(org.bitbucket.dkrut.Ocr.class);
+        Logger log = LoggerFactory.getLogger(ImageText.class);
 
         Properties tesseractProperties = new Properties();
         try {
