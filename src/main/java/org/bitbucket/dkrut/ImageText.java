@@ -22,7 +22,7 @@ public class ImageText {
         PdfConverter pdfConverter = new PdfConverter();
 
         File sourceDir = new File("FilesToOCR");
-        File tempFolder = new File("src/main/resources/temp");
+        File tempFolder = new File("temp");
         File outputFolder = new File("OutputResult");
 
         if (sourceDir.exists() && sourceDir.list() != null) {

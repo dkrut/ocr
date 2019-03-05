@@ -21,7 +21,7 @@ public class PdfConverter {
 
     public void pdfConvert(File pdfFile) {
 
-        File tempFolder = new File("src/main/resources/temp");
+        File tempFolder = new File("temp");
 
         if (pdfFile.exists()) {
             log.info("Start convert " + pdfFile.getName() + " to PNG image");
