@@ -24,6 +24,7 @@ public class PdfConverter {
         File tempFolder = new File("src/main/resources/temp");
 
         if (pdfFile.exists()) {
+            log.info("Start convert " + pdfFile.getName() + " to PNG image");
             try {
                 if (tempFolder.exists()) {
                     log.warn("Previous temp folder is exist. Trying to delete");
@@ -33,7 +34,6 @@ public class PdfConverter {
                 tempFolder.mkdir();
                 log.info("Temp folder created");
 
-                log.info("Start convert " + pdfFile.getName() + " to PNG image");
                 PDDocument document = PDDocument.load(pdfFile);
                 List<PDPage> list = document.getDocumentCatalog().getAllPages();
                 log.info("Total pages to be converted: " + list.size());

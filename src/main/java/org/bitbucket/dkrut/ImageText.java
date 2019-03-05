@@ -21,17 +21,17 @@ public class ImageText {
         Ocr ocr = new Ocr();
         PdfConverter pdfConverter = new PdfConverter();
 
-        File sourceDir = new File("src/main/resources/testFiles");
+        File sourceDir = new File("FilesToOCR");
         File tempFolder = new File("src/main/resources/temp");
-        File outPutFolder = new File("src/main/resources/outPutResult");
+        File outputFolder = new File("OutputResult");
 
         if (sourceDir.exists() && sourceDir.list() != null) {
             log.info(sourceDir + " have files to OCR");
 
-            if (!outPutFolder.exists()){
-                log.warn(outPutFolder + " doesn't exist. Trying to create");
-                outPutFolder.mkdir();
-                log.info(outPutFolder.getName() + " folder created");
+            if (!outputFolder.exists()){
+                log.warn(outputFolder + " doesn't exist. Trying to create");
+                outputFolder.mkdir();
+                log.info(outputFolder.getName() + " folder created");
             }
 
             try {
@@ -39,7 +39,7 @@ public class ImageText {
                 assert sourceDirFiles != null;
                 for (File checkingFile : sourceDirFiles) {
                     String fileNameWithExtension = checkingFile.toString();
-                    File ocrResultFile = new File("src/main/resources/outPutResult/" + FilenameUtils.removeExtension(checkingFile.getName()) + ".txt");
+                    File ocrResultFile = new File(outputFolder + "/" + FilenameUtils.removeExtension(checkingFile.getName()) + ".txt");
                     if (FilenameUtils.getExtension(fileNameWithExtension).equals("pdf")){
                         pdfConverter.pdfConvert(checkingFile);
 
