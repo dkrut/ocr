@@ -26,7 +26,7 @@ public class ImageText {
         File outputFolder = new File("OutputResult");
 
         if (sourceDir.exists() && sourceDir.list() != null) {
-            log.info(sourceDir + " have files to OCR");
+            log.info(sourceDir.getAbsolutePath() + " have files to OCR");
 
             if (!outputFolder.exists()){
                 log.warn(outputFolder + " doesn't exist. Trying to create");
@@ -57,7 +57,7 @@ public class ImageText {
                 log.error("Error while coping/deleting dir: " + e.getMessage());
                 e.printStackTrace();
             }
-        } else log.warn(sourceDir.getName() + " is empty or doesn't exist");
-        log.info("All OCR finished");
+            log.info("All OCR finished");
+        } else log.warn(sourceDir.getAbsolutePath() + " is empty or doesn't exist. Nothing to OCR");
     }
 }

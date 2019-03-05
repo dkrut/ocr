@@ -46,6 +46,7 @@ public class Ocr {
     public void ocrToFile(File fileToOcr, File fileToWrite){
         getTesseractProperties();
         FileWriter fileWriter = null;
+        log.info("Start OCR " + fileToOcr.getName());
 
         if (fileToWrite.exists()){
             log.warn(fileToWrite.getName() + " is already exist. OCR " + fileToOcr.getName() + " will be performed to this file");
@@ -60,7 +61,6 @@ public class Ocr {
         }
 
         try {
-            log.info("Start OCR " + fileToOcr.getName() + " to " + fileToWrite.getName());
             fileWriter = new FileWriter(fileToWrite,true);
             fileWriter.write(instance.doOCR(fileToOcr));
             log.info("OCR " + fileToOcr.getName() + " to " + fileToWrite.getName() + " finished");
