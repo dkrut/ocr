@@ -2,15 +2,15 @@ package org.bitbucket.dkrut;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.rendering.ImageType;
+import org.apache.pdfbox.rendering.PDFRenderer;
+import org.apache.pdfbox.tools.imageio.ImageIOUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by Denis Krutikov on 26.02.2019.
@@ -35,18 +35,16 @@ public class PdfConverter {
                 log.info("Temp folder created");
 
                 PDDocument document = PDDocument.load(pdfFile);
-                List<PDPage> list = document.getDocumentCatalog().getAllPages();
-                log.info("Total pages to be converted: " + list.size());
+                PDFRenderer pdfRenderer = new PDFRenderer(document);
+                int pagesCount = document.getNumberOfPages();
+                log.info("Total pages to be converted: " + pagesCount);
 
-                String fileName = pdfFile.getName().replace(".pdf", ""); //get file name without extension
-                int pageNumber = 1;
+                String fileName = pdfFile.getName().replace(".pdf", "");//get file name
+
                 //convert pdf to png, adding index to all pages
-                for (PDPage page : list) {
-                    BufferedImage image = page.convertToImage();
-                    File outputfile = new File(tempFolder.getPath() + "/" + fileName + "_" + pageNumber + ".png");
-                    log.info("Image created: " + outputfile.getName());
-                    ImageIO.write(image, "png", outputfile);
-                    pageNumber++;
+                for (int pageNumber = 0; pageNumber < pagesCount; pageNumber++) {
+                    BufferedImage bim = pdfRenderer.renderImageWithDPI(pageNumber, 300, ImageType.RGB);
+                    ImageIOUtil.writeImage(bim, tempFolder.getPath() + "/" +  fileName + "_" + pageNumber + ".png", 300); //suffix in filename will be used as the file format
                 }
                 log.info("Converting " + pdfFile.getName() + " finished");
                 document.close();
@@ -74,20 +72,21 @@ public class PdfConverter {
                 assert sourceTempFiles != null;
                 for (File tempDocument : sourceTempFiles) {
                     PDDocument document = PDDocument.load(tempDocument);
-                    List<PDPage> list = document.getDocumentCatalog().getAllPages();
+                    PDFRenderer pdfRenderer = new PDFRenderer(document);
 
                     String fileName = tempDocument.getName().replace(".pdf", ""); //get file name without extension
-                    int pageNumber = 1;
+
+                    int pagesCount = document.getNumberOfPages();
+                    log.info("Total pages to be converted: " + pagesCount);
+
                     //convert pdf to png, adding index to all pages
-                    for (PDPage page : list) {
-                        BufferedImage image = page.convertToImage();
-                        File outputfile = new File(tempFolder.getPath() + "/" + fileName + "_" + pageNumber + ".png");
-                        ImageIO.write(image, "png", outputfile);
-                        pageNumber++;
+                    for (int pageNumber = 0; pageNumber < pagesCount; pageNumber++) {
+                        BufferedImage bim = pdfRenderer.renderImageWithDPI(pageNumber, 300, ImageType.RGB);
+                        ImageIOUtil.writeImage(bim, tempFolder.getPath() + fileName + "_" + pageNumber + ".png", 300); //suffix in filename will be used as the file format
                     }
+                    log.info("Converting " + tempDocument.getName() + " finished");
                     document.close();
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
             }

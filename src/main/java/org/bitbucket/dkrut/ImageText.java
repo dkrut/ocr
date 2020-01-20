@@ -53,11 +53,11 @@ public class ImageText {
 
                     } else ocr.ocrToFile(checkingFile, ocrResultFile);
                 }
+                log.info("All OCR finished");
             } catch (IOException e) {
                 log.error("Error while coping/deleting dir: " + e.getMessage());
                 e.printStackTrace();
             }
-            log.info("All OCR finished");
         } else log.warn(sourceDir.getAbsolutePath() + " is empty or doesn't exist. Nothing to OCR");
     }
 }
