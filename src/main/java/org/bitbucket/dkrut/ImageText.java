@@ -24,9 +24,10 @@ public class ImageText {
         File sourceDir = new File("FilesToOCR");
         File tempFolder = new File("temp");
         File outputFolder = new File("OutputResult");
+        int sourceDirFileCount = sourceDir.listFiles().length;
 
-        if (sourceDir.exists() && sourceDir.list() != null) {
-            log.info(sourceDir.getAbsolutePath() + " have files to OCR");
+        if (sourceDir.exists() && sourceDirFileCount != 0) {
+            log.info(sourceDir.getAbsolutePath() + " have " + sourceDirFileCount + " file(s) to OCR");
 
             if (!outputFolder.exists()){
                 log.warn(outputFolder + " doesn't exist. Trying to create");
