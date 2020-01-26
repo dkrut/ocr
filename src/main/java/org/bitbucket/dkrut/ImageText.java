@@ -20,6 +20,7 @@ public class ImageText {
 
         Ocr ocr = new Ocr();
         PdfConverter pdfConverter = new PdfConverter();
+        Property property = new Property();
 
         File sourceDir = new File("FilesToOCR");
         File tempFolder = new File("temp");
@@ -47,12 +48,18 @@ public class ImageText {
                         File[] tempFolderFiles = tempFolder.listFiles();
                         assert tempFolderFiles != null;
                         for (File ocrResult : tempFolderFiles) {
+                            if (property.getProperty("outputResultTo").equals("file"))
                             ocr.ocrToFile(ocrResult, ocrResultFile);
+                            else ocr.ocrToConsole(ocrResult);
                         }
                         FileUtils.forceDelete(tempFolder);
                         log.info("Temp folder deleted");
 
-                    } else ocr.ocrToFile(checkingFile, ocrResultFile);
+                    } else {
+                        if (property.getProperty("outputResultTo").equals("file"))
+                            ocr.ocrToFile(checkingFile, ocrResultFile);
+                        else ocr.ocrToConsole(checkingFile);
+                    }
                 }
                 log.info("All OCR finished");
             } catch (IOException e) {

@@ -5,29 +5,22 @@ import net.sourceforge.tess4j.TesseractException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.util.Properties;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * Created by Denis Krutikov on 04.03.2019.
  */
 
-public class Ocr {
+class Ocr {
 
     private Logger log = LoggerFactory.getLogger(Ocr.class);
 
-    private Properties tesseractProperties = new Properties();
+    private Property tesseractProperties = new Property();
     private Tesseract instance = new Tesseract();
 
     private void getTesseractProperties(){
-        try {
-            FileInputStream fis = new FileInputStream("src/main/resources/tesseract.properties");
-            tesseractProperties.load(fis);
-        } catch (IOException e) {
-            log.error("Error while reading Tesseract properties: " + e.getMessage());
-            e.printStackTrace();
-        }
-
         instance.setDatapath("src/main/resources/tessdata");
         instance.setLanguage(tesseractProperties.getProperty("language"));
     }
@@ -36,7 +29,7 @@ public class Ocr {
         getTesseractProperties();
         try {
             log.info("Start OCR " + fileToOcr.getName());
-            System.out.println(instance.doOCR(fileToOcr));
+            log.info("OCR result:\n" + instance.doOCR(fileToOcr));
         } catch (TesseractException e) {
             log.error("Error while reading image: " + e.getMessage());
             e.printStackTrace();
