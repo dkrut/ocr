@@ -75,4 +75,11 @@ class Ocr {
             }
         }
     }
+
+    public void ocrFile(File fileToOcr, File fileToWrite) {
+        String outputResultToProperty = tesseractProperties.getProperty("outputResultTo");
+        if (outputResultToProperty == null || !outputResultToProperty.equalsIgnoreCase("file"))
+            ocrToConsole(fileToOcr);
+        else ocrToFile(fileToOcr, fileToWrite);
+    }
 }
