@@ -1,4 +1,4 @@
-package org.bitbucket.dkrut;
+package com.github.dkrut;
 
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;

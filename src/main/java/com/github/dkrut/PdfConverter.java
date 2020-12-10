@@ -1,4 +1,4 @@
-package org.bitbucket.dkrut;
+package com.github.dkrut;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
