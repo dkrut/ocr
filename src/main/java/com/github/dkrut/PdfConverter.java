@@ -18,7 +18,7 @@ import java.io.IOException;
 public class PdfConverter {
     private final Logger log = LoggerFactory.getLogger(PdfConverter.class);
 
-    public void pdfConvert(File pdfFile) {
+    public File pdfConvert(File pdfFile) {
         File tempFolder = new File("temp");
         if (pdfFile.exists()) {
             log.info("Start converting " + pdfFile.getName() + " to PNG images");
@@ -44,11 +44,15 @@ public class PdfConverter {
                 }
                 log.info("Converting " + pdfFile.getName() + " finished");
                 document.close();
+                return tempFolder;
             } catch (IOException e) {
                 log.error("Error while converting PDF to PNG" + e.getMessage());
                 e.printStackTrace();
             }
-        } else log.warn(pdfFile.getName() + " doesn't exist");
+        } else {
+            log.warn(pdfFile.getName() + " doesn't exist");
+        }
+        return tempFolder;
     }
 
     public void pdfConvertAll() {

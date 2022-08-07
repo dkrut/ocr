@@ -15,18 +15,16 @@ public class ImageToTextConverter {
     public static void main(String[] args) {
         Logger log = LoggerFactory.getLogger(ImageToTextConverter.class);
 
-        Ocr ocr = new Ocr();
-        PdfConverter pdfConverter = new PdfConverter();
         File sourceDir = new File("FilesToOCR");
-        File tempFolder = new File("temp");
-        File outputFolder = new File("OutputResult");
         if (!sourceDir.exists()) {
             log.error(sourceDir.getAbsolutePath() + " doesn't exist");
             throw new IllegalArgumentException();
         }
+
         File[] sourceDirFiles = sourceDir.listFiles();
         if (sourceDirFiles.length > 0) {
             log.info(sourceDir.getAbsolutePath() + " have " + sourceDirFiles.length + " file(s) to OCR");
+            File outputFolder = new File("OutputResult");
             if (!outputFolder.exists()) {
                 log.warn(outputFolder + " doesn't exist. Trying to create");
                 outputFolder.mkdir();
@@ -34,18 +32,22 @@ public class ImageToTextConverter {
             }
             try {
                 for (File checkingFile : sourceDirFiles) {
+                    Ocr ocr = new Ocr();
                     String fileNameWithExtension = checkingFile.toString();
                     File ocrResultFile = new File(outputFolder + "/" + FilenameUtils.removeExtension(checkingFile.getName()) + ".txt");
                     if (FilenameUtils.getExtension(fileNameWithExtension).equals("pdf")) {
-                        pdfConverter.pdfConvert(checkingFile);
-
-                        File[] tempFolderFiles = tempFolder.listFiles();
-                        assert tempFolderFiles != null;
-                        for (File ocrResult : tempFolderFiles) {
-                            ocr.ocrFile(ocrResult, ocrResultFile);
+                        PdfConverter pdfConverter = new PdfConverter();
+                        File tempFolder = pdfConverter.pdfConvert(checkingFile);
+                        if (tempFolder.isDirectory() && tempFolder.exists()) {
+                            File[] tempFolderFiles = tempFolder.listFiles();
+                            if (tempFolderFiles.length > 0) {
+                                for (File ocrResult : tempFolderFiles) {
+                                    ocr.ocrFile(ocrResult, ocrResultFile);
+                                }
+                                FileUtils.forceDelete(tempFolder);
+                                log.debug("Temp folder deleted");
+                            }
                         }
-                        FileUtils.forceDelete(tempFolder);
-                        log.debug("Temp folder deleted");
                     } else {
                         ocr.ocrFile(checkingFile, ocrResultFile);
                     }
