@@ -11,37 +11,32 @@ import java.io.IOException;
 /**
  * Created by Denis Krutikov on 26.02.2019.
  */
-
-public class ImageText {
-
+public class ImageToTextConverter {
     public static void main(String[] args) {
-
-        Logger log = LoggerFactory.getLogger(ImageText.class);
+        Logger log = LoggerFactory.getLogger(ImageToTextConverter.class);
 
         Ocr ocr = new Ocr();
         PdfConverter pdfConverter = new PdfConverter();
-
         File sourceDir = new File("FilesToOCR");
         File tempFolder = new File("temp");
         File outputFolder = new File("OutputResult");
-        int sourceDirFileCount = sourceDir.listFiles().length;
-
-        if (sourceDir.exists() && sourceDirFileCount != 0) {
-            log.info(sourceDir.getAbsolutePath() + " have " + sourceDirFileCount + " file(s) to OCR");
-
-            if (!outputFolder.exists()){
+        if (!sourceDir.exists()) {
+            log.error(sourceDir.getAbsolutePath() + " doesn't exist");
+            throw new IllegalArgumentException();
+        }
+        File[] sourceDirFiles = sourceDir.listFiles();
+        if (sourceDirFiles.length > 0) {
+            log.info(sourceDir.getAbsolutePath() + " have " + sourceDirFiles.length + " file(s) to OCR");
+            if (!outputFolder.exists()) {
                 log.warn(outputFolder + " doesn't exist. Trying to create");
                 outputFolder.mkdir();
                 log.info(outputFolder.getName() + " folder created");
             }
-
             try {
-                File[] sourceDirFiles = sourceDir.listFiles();
-                assert sourceDirFiles != null;
                 for (File checkingFile : sourceDirFiles) {
                     String fileNameWithExtension = checkingFile.toString();
                     File ocrResultFile = new File(outputFolder + "/" + FilenameUtils.removeExtension(checkingFile.getName()) + ".txt");
-                    if (FilenameUtils.getExtension(fileNameWithExtension).equals("pdf")){
+                    if (FilenameUtils.getExtension(fileNameWithExtension).equals("pdf")) {
                         pdfConverter.pdfConvert(checkingFile);
 
                         File[] tempFolderFiles = tempFolder.listFiles();
@@ -50,8 +45,7 @@ public class ImageText {
                             ocr.ocrFile(ocrResult, ocrResultFile);
                         }
                         FileUtils.forceDelete(tempFolder);
-                        log.info("Temp folder deleted");
-
+                        log.debug("Temp folder deleted");
                     } else {
                         ocr.ocrFile(checkingFile, ocrResultFile);
                     }
@@ -61,6 +55,8 @@ public class ImageText {
                 log.error("Error while coping/deleting dir: " + e.getMessage());
                 e.printStackTrace();
             }
-        } else log.warn(sourceDir.getAbsolutePath() + " is empty or doesn't exist. Nothing to OCR");
+        } else {
+            log.warn(sourceDir.getAbsolutePath() + " is empty. Nothing to OCR");
+        }
     }
 }

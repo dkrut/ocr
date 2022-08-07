@@ -15,16 +15,13 @@ import java.io.IOException;
 /**
  * Created by Denis Krutikov on 26.02.2019.
  */
-
 public class PdfConverter {
-    private Logger log = LoggerFactory.getLogger(PdfConverter.class);
+    private final Logger log = LoggerFactory.getLogger(PdfConverter.class);
 
     public void pdfConvert(File pdfFile) {
-
         File tempFolder = new File("temp");
-
         if (pdfFile.exists()) {
-            log.info("Start convert " + pdfFile.getName() + " to PNG image");
+            log.info("Start converting " + pdfFile.getName() + " to PNG images");
             try {
                 if (tempFolder.exists()) {
                     log.warn("Previous temp folder is exist. Trying to delete");
@@ -32,7 +29,7 @@ public class PdfConverter {
                     log.info("Previous temp folder deleted");
                 }
                 tempFolder.mkdir();
-                log.info("Temp folder created");
+                log.debug("Temp folder created");
 
                 PDDocument document = PDDocument.load(pdfFile);
                 PDFRenderer pdfRenderer = new PDFRenderer(document);
@@ -40,7 +37,6 @@ public class PdfConverter {
                 log.info("Total pages to be converted: " + pagesCount);
 
                 String fileName = pdfFile.getName().replace(".pdf", "");//get file name
-
                 //convert pdf to png, adding index to all pages
                 for (int pageNumber = 0; pageNumber < pagesCount; pageNumber++) {
                     BufferedImage bim = pdfRenderer.renderImageWithDPI(pageNumber, 300, ImageType.RGB);
@@ -48,7 +44,6 @@ public class PdfConverter {
                 }
                 log.info("Converting " + pdfFile.getName() + " finished");
                 document.close();
-
             } catch (IOException e) {
                 log.error("Error while converting PDF to PNG" + e.getMessage());
                 e.printStackTrace();
@@ -57,18 +52,15 @@ public class PdfConverter {
     }
 
     public void pdfConvertAll() {
-
         File sourcePdfDir = new File("src/main/resources/pdf");
         File tempFolder = new File("src/main/resources/temp");
 
         if (sourcePdfDir.listFiles() != null) {
             try {
                 File[] sourceTempFiles = sourcePdfDir.listFiles();
-
                 if (!tempFolder.exists()) {
                     tempFolder.mkdir();
                 }
-
                 assert sourceTempFiles != null;
                 for (File tempDocument : sourceTempFiles) {
                     PDDocument document = PDDocument.load(tempDocument);
