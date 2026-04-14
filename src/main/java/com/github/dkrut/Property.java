@@ -7,23 +7,29 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-/**
- * Created by Denis Krutikov on 26.01.2020.
- */
 public class Property {
-    private final Logger log = LoggerFactory.getLogger(Property.class);
+    private static final String CONFIG_PATH = "src/main/resources/tesseract.properties";
 
-    public String getProperty(String key)  {
-        try (FileInputStream fis = new FileInputStream("src/main/resources/tesseract.properties")) {
-            Properties properties = new Properties();
+    private final Logger log = LoggerFactory.getLogger(Property.class);
+    private final Properties properties;
+
+    public Property() {
+        properties = new Properties();
+        loadProperties();
+    }
+
+    private void loadProperties() {
+        try (FileInputStream fis = new FileInputStream(CONFIG_PATH)) {
             properties.load(fis);
-            String propertyValue = properties.getProperty(key);
-            log.debug("Property \"{}\" = {}", key, propertyValue);
-            return propertyValue;
         } catch (IOException e) {
             log.warn("Error while reading tesseract.properties: {}", e.getMessage());
             e.printStackTrace();
         }
-        return null;
+    }
+
+    public String getProperty(String key) {
+        String propertyValue = properties.getProperty(key);
+        log.debug("Property \"{}\" = {}", key, propertyValue);
+        return propertyValue;
     }
 }

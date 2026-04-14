@@ -13,14 +13,14 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * Created by Denis Krutikov on 26.02.2019.
- */
 public class PdfConverter {
+    private static final String TEMP_DIR = "temp";
+    private static final int DPI = 300;
+
     private final Logger log = LoggerFactory.getLogger(PdfConverter.class);
 
     public File pdfConvert(File pdfFile) {
-        File tempFolder = new File("temp");
+        File tempFolder = new File(TEMP_DIR);
         if (pdfFile.exists()) {
             log.info("Start converting {} to PNG images", pdfFile.getName());
             try {
@@ -39,8 +39,8 @@ public class PdfConverter {
 
                     String fileName = pdfFile.getName().replace(".pdf", "");
                     for (int pageNumber = 0; pageNumber < pagesCount; pageNumber++) {
-                        BufferedImage bim = pdfRenderer.renderImageWithDPI(pageNumber, 300, ImageType.RGB);
-                        ImageIOUtil.writeImage(bim, tempFolder.getPath() + "/" + fileName + "_" + pageNumber + ".png", 300);
+                        BufferedImage bim = pdfRenderer.renderImageWithDPI(pageNumber, DPI, ImageType.RGB);
+                        ImageIOUtil.writeImage(bim, tempFolder.getPath() + File.separator + fileName + "_" + pageNumber + ".png", DPI);
                     }
                     log.info("Converting {} finished", pdfFile.getName());
                 }
@@ -53,38 +53,5 @@ public class PdfConverter {
             log.warn(pdfFile.getName() + " doesn't exist");
         }
         return tempFolder;
-    }
-
-    public void pdfConvertAll() {
-        File sourcePdfDir = new File("src/main/resources/pdf");
-        File tempFolder = new File("src/main/resources/temp");
-
-        if (sourcePdfDir.listFiles() != null) {
-            try {
-                File[] sourceTempFiles = sourcePdfDir.listFiles();
-                if (!tempFolder.exists()) {
-                    tempFolder.mkdir();
-                }
-                assert sourceTempFiles != null;
-                for (File tempDocument : sourceTempFiles) {
-                    try (PDDocument document = Loader.loadPDF(tempDocument)) {
-                        PDFRenderer pdfRenderer = new PDFRenderer(document);
-
-                        String fileName = tempDocument.getName().replace(".pdf", "");
-
-                        int pagesCount = document.getNumberOfPages();
-                        log.info("Total pages to be converted: {}", pagesCount);
-
-                        for (int pageNumber = 0; pageNumber < pagesCount; pageNumber++) {
-                            BufferedImage bim = pdfRenderer.renderImageWithDPI(pageNumber, 300, ImageType.RGB);
-                            ImageIOUtil.writeImage(bim, tempFolder.getPath() + fileName + "_" + pageNumber + ".png", 300);
-                        }
-                        log.info("Converting {} finished", tempDocument.getName());
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 }

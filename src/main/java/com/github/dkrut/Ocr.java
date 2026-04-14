@@ -9,12 +9,17 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-/**
- * Created by Denis Krutikov on 04.03.2019.
- */
 class Ocr {
+    private static final String TESSDATA_PATH = "src/main/resources/tessdata";
+
     private final Logger log = LoggerFactory.getLogger(Ocr.class);
     private final Tesseract instance = new Tesseract();
+    private final Property properties = new Property();
+
+    Ocr() {
+        instance.setDatapath(TESSDATA_PATH);
+        instance.setLanguage(properties.getProperty("language"));
+    }
 
     public void ocrToConsole(File fileToOcr) {
         try {
@@ -53,10 +58,7 @@ class Ocr {
     }
 
     public void ocrFile(File fileToOcr, File fileToWrite) {
-        Property tesseractProperties = new Property();
-        instance.setDatapath("src/main/resources/tessdata");
-        instance.setLanguage(tesseractProperties.getProperty("language"));
-        String outputResultToProperty = tesseractProperties.getProperty("outputResultTo");
+        String outputResultToProperty = properties.getProperty("outputResultTo");
         if (outputResultToProperty == null || !outputResultToProperty.equalsIgnoreCase("file")) {
             ocrToConsole(fileToOcr);
         } else {
