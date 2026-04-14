@@ -1,6 +1,7 @@
 package com.github.dkrut;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -31,19 +32,18 @@ public class PdfConverter {
                 tempFolder.mkdir();
                 log.debug("Temp folder created");
 
-                PDDocument document = PDDocument.load(pdfFile);
-                PDFRenderer pdfRenderer = new PDFRenderer(document);
-                int pagesCount = document.getNumberOfPages();
-                log.info("Total pages to be converted: " + pagesCount);
+                try (PDDocument document = Loader.loadPDF(pdfFile)) {
+                    PDFRenderer pdfRenderer = new PDFRenderer(document);
+                    int pagesCount = document.getNumberOfPages();
+                    log.info("Total pages to be converted: " + pagesCount);
 
-                String fileName = pdfFile.getName().replace(".pdf", "");//get file name
-                //convert pdf to png, adding index to all pages
-                for (int pageNumber = 0; pageNumber < pagesCount; pageNumber++) {
-                    BufferedImage bim = pdfRenderer.renderImageWithDPI(pageNumber, 300, ImageType.RGB);
-                    ImageIOUtil.writeImage(bim, tempFolder.getPath() + "/" +  fileName + "_" + pageNumber + ".png", 300); //suffix in filename will be used as the file format
+                    String fileName = pdfFile.getName().replace(".pdf", "");
+                    for (int pageNumber = 0; pageNumber < pagesCount; pageNumber++) {
+                        BufferedImage bim = pdfRenderer.renderImageWithDPI(pageNumber, 300, ImageType.RGB);
+                        ImageIOUtil.writeImage(bim, tempFolder.getPath() + "/" + fileName + "_" + pageNumber + ".png", 300);
+                    }
+                    log.info("Converting " + pdfFile.getName() + " finished");
                 }
-                log.info("Converting " + pdfFile.getName() + " finished");
-                document.close();
                 return tempFolder;
             } catch (IOException e) {
                 log.error("Error while converting PDF to PNG" + e.getMessage());
@@ -67,21 +67,20 @@ public class PdfConverter {
                 }
                 assert sourceTempFiles != null;
                 for (File tempDocument : sourceTempFiles) {
-                    PDDocument document = PDDocument.load(tempDocument);
-                    PDFRenderer pdfRenderer = new PDFRenderer(document);
+                    try (PDDocument document = Loader.loadPDF(tempDocument)) {
+                        PDFRenderer pdfRenderer = new PDFRenderer(document);
 
-                    String fileName = tempDocument.getName().replace(".pdf", ""); //get file name without extension
+                        String fileName = tempDocument.getName().replace(".pdf", "");
 
-                    int pagesCount = document.getNumberOfPages();
-                    log.info("Total pages to be converted: " + pagesCount);
+                        int pagesCount = document.getNumberOfPages();
+                        log.info("Total pages to be converted: " + pagesCount);
 
-                    //convert pdf to png, adding index to all pages
-                    for (int pageNumber = 0; pageNumber < pagesCount; pageNumber++) {
-                        BufferedImage bim = pdfRenderer.renderImageWithDPI(pageNumber, 300, ImageType.RGB);
-                        ImageIOUtil.writeImage(bim, tempFolder.getPath() + fileName + "_" + pageNumber + ".png", 300); //suffix in filename will be used as the file format
+                        for (int pageNumber = 0; pageNumber < pagesCount; pageNumber++) {
+                            BufferedImage bim = pdfRenderer.renderImageWithDPI(pageNumber, 300, ImageType.RGB);
+                            ImageIOUtil.writeImage(bim, tempFolder.getPath() + fileName + "_" + pageNumber + ".png", 300);
+                        }
+                        log.info("Converting " + tempDocument.getName() + " finished");
                     }
-                    log.info("Converting " + tempDocument.getName() + " finished");
-                    document.close();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
