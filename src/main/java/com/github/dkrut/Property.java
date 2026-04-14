@@ -18,10 +18,10 @@ public class Property {
             Properties properties = new Properties();
             properties.load(fis);
             String propertyValue = properties.getProperty(key);
-            log.debug("Property \"" + key + "\" = " + propertyValue);
+            log.debug("Property \"{}\" = {}", key, propertyValue);
             return propertyValue;
         } catch (IOException e) {
-            log.warn("Error while reading tesseract.properties: " + e.getMessage());
+            log.warn("Error while reading tesseract.properties: {}", e.getMessage());
             e.printStackTrace();
         }
         return null;

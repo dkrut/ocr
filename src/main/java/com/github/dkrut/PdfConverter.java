@@ -22,7 +22,7 @@ public class PdfConverter {
     public File pdfConvert(File pdfFile) {
         File tempFolder = new File("temp");
         if (pdfFile.exists()) {
-            log.info("Start converting " + pdfFile.getName() + " to PNG images");
+            log.info("Start converting {} to PNG images", pdfFile.getName());
             try {
                 if (tempFolder.exists()) {
                     log.warn("Previous temp folder is exist. Trying to delete");
@@ -35,18 +35,18 @@ public class PdfConverter {
                 try (PDDocument document = Loader.loadPDF(pdfFile)) {
                     PDFRenderer pdfRenderer = new PDFRenderer(document);
                     int pagesCount = document.getNumberOfPages();
-                    log.info("Total pages to be converted: " + pagesCount);
+                    log.info("Total pages to be converted: {}", pagesCount);
 
                     String fileName = pdfFile.getName().replace(".pdf", "");
                     for (int pageNumber = 0; pageNumber < pagesCount; pageNumber++) {
                         BufferedImage bim = pdfRenderer.renderImageWithDPI(pageNumber, 300, ImageType.RGB);
                         ImageIOUtil.writeImage(bim, tempFolder.getPath() + "/" + fileName + "_" + pageNumber + ".png", 300);
                     }
-                    log.info("Converting " + pdfFile.getName() + " finished");
+                    log.info("Converting {} finished", pdfFile.getName());
                 }
                 return tempFolder;
             } catch (IOException e) {
-                log.error("Error while converting PDF to PNG" + e.getMessage());
+                log.error("Error while converting PDF to PNG{}", e.getMessage());
                 e.printStackTrace();
             }
         } else {
@@ -73,13 +73,13 @@ public class PdfConverter {
                         String fileName = tempDocument.getName().replace(".pdf", "");
 
                         int pagesCount = document.getNumberOfPages();
-                        log.info("Total pages to be converted: " + pagesCount);
+                        log.info("Total pages to be converted: {}", pagesCount);
 
                         for (int pageNumber = 0; pageNumber < pagesCount; pageNumber++) {
                             BufferedImage bim = pdfRenderer.renderImageWithDPI(pageNumber, 300, ImageType.RGB);
                             ImageIOUtil.writeImage(bim, tempFolder.getPath() + fileName + "_" + pageNumber + ".png", 300);
                         }
-                        log.info("Converting " + tempDocument.getName() + " finished");
+                        log.info("Converting {} finished", tempDocument.getName());
                     }
                 }
             } catch (Exception e) {

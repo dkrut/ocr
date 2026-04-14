@@ -17,18 +17,18 @@ public class ImageToTextConverter {
 
         File sourceDir = new File("FilesToOCR");
         if (!sourceDir.exists()) {
-            log.error(sourceDir.getAbsolutePath() + " doesn't exist");
+            log.error("{} doesn't exist", sourceDir.getAbsolutePath());
             throw new IllegalArgumentException();
         }
 
         File[] sourceDirFiles = sourceDir.listFiles();
         if (sourceDirFiles.length > 0) {
-            log.info(sourceDir.getAbsolutePath() + " have " + sourceDirFiles.length + " file(s) to OCR");
+            log.info("{} have {} file(s) to OCR", sourceDir.getAbsolutePath(), sourceDirFiles.length);
             File outputFolder = new File("OutputResult");
             if (!outputFolder.exists()) {
-                log.warn(outputFolder + " doesn't exist. Trying to create");
+                log.warn("{} doesn't exist. Trying to create", outputFolder);
                 outputFolder.mkdir();
-                log.info(outputFolder.getName() + " folder created");
+                log.info("{} folder created", outputFolder.getName());
             }
             try {
                 for (File checkingFile : sourceDirFiles) {
@@ -54,11 +54,11 @@ public class ImageToTextConverter {
                 }
                 log.info("All OCR finished");
             } catch (IOException e) {
-                log.error("Error while coping/deleting dir: " + e.getMessage());
+                log.error("Error while coping/deleting dir: {}", e.getMessage());
                 e.printStackTrace();
             }
         } else {
-            log.warn(sourceDir.getAbsolutePath() + " is empty. Nothing to OCR");
+            log.warn("{} is empty. Nothing to OCR", sourceDir.getAbsolutePath());
         }
     }
 }

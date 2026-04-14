@@ -18,36 +18,36 @@ class Ocr {
 
     public void ocrToConsole(File fileToOcr) {
         try {
-            log.info("Start OCR " + fileToOcr.getName());
-            log.info("OCR result:\n" + instance.doOCR(fileToOcr));
+            log.info("Start OCR {}", fileToOcr.getName());
+            log.info("OCR result:\n{}", instance.doOCR(fileToOcr));
         } catch (TesseractException e) {
-            log.error("Error while reading image: " + e.getMessage());
+            log.error("Error while reading image: {}", e.getMessage());
             e.printStackTrace();
         }
     }
 
     public void ocrToFile(File fileToOcr, File fileToWrite) {
-        log.info("Start OCR " + fileToOcr.getName());
+        log.info("Start OCR {}", fileToOcr.getName());
         if (fileToWrite.exists()) {
-            log.debug(fileToWrite.getName() + " is already exist. OCR " + fileToOcr.getName() + " will be performed to this file");
+            log.debug("{} is already exist. OCR {} will be performed to this file", fileToWrite.getName(), fileToOcr.getName());
         } else {
             try {
                 fileToWrite.createNewFile();
-                log.info("File " + fileToWrite.getName() + " created");
+                log.info("File {} created", fileToWrite.getName());
             } catch (IOException e) {
-                log.error("Error while creating file " + fileToWrite.getName() + ": " + e.getMessage());
+                log.error("Error while creating file {}: {}", fileToWrite.getName(), e.getMessage());
                 e.printStackTrace();
             }
         }
 
         try (FileWriter fileWriter = new FileWriter(fileToWrite, true)) {
             fileWriter.write(instance.doOCR(fileToOcr));
-            log.info("OCR " + fileToOcr.getName() + " to " + fileToWrite.getName() + " finished");
+            log.info("OCR {} to {} finished", fileToOcr.getName(), fileToWrite.getName());
         } catch (TesseractException e) {
-            log.error("Error while reading image: " + e.getMessage());
+            log.error("Error while reading image: {}", e.getMessage());
             e.printStackTrace();
         } catch (IOException e) {
-            log.error("Error while writing file " + fileToWrite.getName() + ": " + e.getMessage());
+            log.error("Error while writing file {}: {}", fileToWrite.getName(), e.getMessage());
             e.printStackTrace();
         }
     }
