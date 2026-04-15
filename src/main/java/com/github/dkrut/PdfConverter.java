@@ -14,15 +14,15 @@ import java.io.File;
 import java.io.IOException;
 
 public class PdfConverter {
-    private static final String TEMP_DIR = "temp";
+    private static final String TEMP_DIR = "target/temp";
     private static final int DPI = 300;
 
     private final Logger log = LoggerFactory.getLogger(PdfConverter.class);
 
-    public File pdfConvert(File pdfFile) {
+    public File pdfConvert(File pdfFile, String originalFileName) {
         File tempFolder = new File(TEMP_DIR);
         if (pdfFile.exists()) {
-            log.info("Start converting {} to PNG images", pdfFile.getName());
+            log.info("Start converting '{}' to PNG images", originalFileName);
             try {
                 if (tempFolder.exists()) {
                     log.warn("Previous temp folder is exist. Trying to delete");
@@ -37,12 +37,12 @@ public class PdfConverter {
                     int pagesCount = document.getNumberOfPages();
                     log.info("Total pages to be converted: {}", pagesCount);
 
-                    String fileName = pdfFile.getName().replace(".pdf", "");
+                    String fileName = originalFileName.replace(".pdf", "");
                     for (int pageNumber = 0; pageNumber < pagesCount; pageNumber++) {
                         BufferedImage bim = pdfRenderer.renderImageWithDPI(pageNumber, DPI, ImageType.RGB);
                         ImageIOUtil.writeImage(bim, tempFolder.getPath() + File.separator + fileName + "_" + pageNumber + ".png", DPI);
                     }
-                    log.info("Converting {} finished", pdfFile.getName());
+                    log.info("Converting '{}' finished", originalFileName);
                 }
                 return tempFolder;
             } catch (IOException e) {

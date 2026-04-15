@@ -13,6 +13,7 @@
         <tess4j.version>5.18.0</tess4j.version>
         <slf4j.version>2.0.17</slf4j.version>
         <commons-io.version>2.21.0</commons-io.version>
+        <javalin.version>7.1.0</javalin.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -38,6 +39,11 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons-io.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.javalin</groupId>
+            <artifactId>javalin</artifactId>
+            <version>${javalin.version}</version>
         </dependency>
      </dependencies>
 </project>
