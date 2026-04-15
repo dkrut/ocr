@@ -1,6 +1,5 @@
 package com.github.dkrut;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
@@ -12,25 +11,19 @@ import org.slf4j.LoggerFactory;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 public class PdfConverter {
-    private static final String TEMP_DIR = "target/temp";
     private static final int DPI = 300;
 
     private final Logger log = LoggerFactory.getLogger(PdfConverter.class);
 
-    public File pdfConvert(File pdfFile, String originalFileName) {
-        File tempFolder = new File(TEMP_DIR);
+    public File pdfConvert(File pdfFile, String originalFileName, Path tempDir) {
+        File tempFolder = new File(tempDir.toFile(), "pdf-images");
         if (pdfFile.exists()) {
             log.info("Start converting '{}' to PNG images", originalFileName);
             try {
-                if (tempFolder.exists()) {
-                    log.warn("Previous temp folder is exist. Trying to delete");
-                    FileUtils.forceDelete(tempFolder);
-                    log.info("Previous temp folder deleted");
-                }
-                tempFolder.mkdir();
-                log.debug("Temp folder created");
+                tempFolder.mkdirs();
 
                 try (PDDocument document = Loader.loadPDF(pdfFile)) {
                     PDFRenderer pdfRenderer = new PDFRenderer(document);
@@ -46,11 +39,11 @@ public class PdfConverter {
                 }
                 return tempFolder;
             } catch (IOException e) {
-                log.error("Error while converting PDF to PNG{}", e.getMessage());
+                log.error("Error while converting PDF to PNG: {}", e.getMessage());
                 e.printStackTrace();
             }
         } else {
-            log.warn(pdfFile.getName() + " doesn't exist");
+            log.warn("'{}' doesn't exist", pdfFile.getName());
         }
         return tempFolder;
     }

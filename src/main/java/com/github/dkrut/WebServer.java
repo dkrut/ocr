@@ -38,7 +38,7 @@ public class WebServer {
                         : "eng";
 
                 log.info("Starting OCR for file '{}' with languages: '{}'", uploadedFile.filename(), languages);
-                
+
                 try {
                     String result = processOcr(uploadedFile.content(), uploadedFile.filename(), languages);
                     ctx.result(result);
@@ -67,7 +67,7 @@ public class WebServer {
             throw new IllegalArgumentException("Unsupported file format: " + extension + ". Supported: PDF, PNG, JPG, JPEG, TIFF, BMP");
         }
 
-        Path tempDir = Files.createTempDirectory("ocr");
+        Path tempDir = Files.createTempDirectory("ocr-");
         File tempFile = tempDir.resolve(UUID.randomUUID() + "." + extension).toFile();
 
         try {
@@ -81,7 +81,7 @@ public class WebServer {
 
         if (extension.equals("pdf")) {
             PdfConverter pdfConverter = new PdfConverter();
-            File tempFolder = pdfConverter.pdfConvert(tempFile, fileName);
+            File tempFolder = pdfConverter.pdfConvert(tempFile, fileName, tempDir);
             if (tempFolder.isDirectory() && tempFolder.exists()) {
                 File[] images = tempFolder.listFiles();
                 if (images != null) {
@@ -103,7 +103,7 @@ public class WebServer {
         Files.walk(tempDir).sorted(Comparator.reverseOrder()).forEach(p -> {
             try {
                 Files.delete(p);
-            } catch (java.io.IOException ignored) {
+            } catch (IOException ignored) {
             }
         });
 
