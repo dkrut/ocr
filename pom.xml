@@ -11,7 +11,7 @@
     <properties>
         <pdfbox.version>3.0.7</pdfbox.version>
         <tess4j.version>5.18.0</tess4j.version>
-        <slf4j.version>2.0.17</slf4j.version>
+        <logback.version>1.5.32</logback.version>
         <commons-io.version>2.21.0</commons-io.version>
         <javalin.version>7.1.0</javalin.version>
         <maven.compiler.source>17</maven.compiler.source>
@@ -31,9 +31,9 @@
             <version>${tess4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j.version}</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>

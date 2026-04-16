@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
@@ -36,12 +38,13 @@ public class WebServer {
                         ? languagesParam
                         : "eng";
 
+                LocalDateTime startTime = LocalDateTime.now();
                 log.info("Starting OCR for file '{}' with languages: '{}'", uploadedFile.filename(), languages);
-
                 try {
                     String result = processOcr(uploadedFile.content(), uploadedFile.filename(), languages);
                     ctx.result(result);
-                    log.info("OCR completed for file: '{}'", uploadedFile.filename());
+                    long durationSeconds = Duration.between(startTime, LocalDateTime.now()).getSeconds();
+                    log.info("OCR completed for file '{}' (duration: {}s)", uploadedFile.filename(), durationSeconds);
                 } catch (Exception e) {
                     log.error("OCR failed for file '{}': {}", uploadedFile.filename(), e.getMessage());
                     ctx.status(500).result("Error: " + e.getMessage());
