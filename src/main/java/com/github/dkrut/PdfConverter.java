@@ -12,39 +12,48 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PdfConverter {
     private static final int DPI = 300;
 
     private final Logger log = LoggerFactory.getLogger(PdfConverter.class);
 
-    public File pdfConvert(File pdfFile, String originalFileName, Path tempDir) {
+    public List<File> convert(File pdfFile, String originalFileName, Path tempDir) {
+        List<File> images = new ArrayList<>();
         File tempFolder = new File(tempDir.toFile(), "pdf-images");
-        if (pdfFile.exists()) {
-            log.info("Start converting '{}' to PNG images", originalFileName);
-            try {
-                tempFolder.mkdirs();
 
-                try (PDDocument document = Loader.loadPDF(pdfFile)) {
-                    PDFRenderer pdfRenderer = new PDFRenderer(document);
-                    int pagesCount = document.getNumberOfPages();
-                    log.info("Total pages to be converted: {}", pagesCount);
-
-                    String fileName = originalFileName.replace(".pdf", "");
-                    for (int pageNumber = 0; pageNumber < pagesCount; pageNumber++) {
-                        BufferedImage bim = pdfRenderer.renderImageWithDPI(pageNumber, DPI, ImageType.RGB);
-                        ImageIOUtil.writeImage(bim, tempFolder.getPath() + File.separator + fileName + "_" + pageNumber + ".png", DPI);
-                    }
-                    log.info("Converting '{}' finished", originalFileName);
-                }
-                return tempFolder;
-            } catch (IOException e) {
-                log.error("Error while converting PDF to PNG: {}", e.getMessage());
-                e.printStackTrace();
-            }
-        } else {
+        if (!pdfFile.exists()) {
             log.warn("'{}' doesn't exist", pdfFile.getName());
+            return images;
         }
-        return tempFolder;
+
+        log.info("Start converting '{}' to PNG images", originalFileName);
+        try {
+            tempFolder.mkdirs();
+
+            try (PDDocument document = Loader.loadPDF(pdfFile)) {
+                PDFRenderer pdfRenderer = new PDFRenderer(document);
+                int pagesCount = document.getNumberOfPages();
+                log.info("Total pages to be converted: {}", pagesCount);
+
+                String baseName = originalFileName.replace(".pdf", "");
+
+                for (int pageNumber = 0; pageNumber < pagesCount; pageNumber++) {
+                    BufferedImage bim = pdfRenderer.renderImageWithDPI(pageNumber, DPI, ImageType.RGB);
+                    File imageFile = new File(tempFolder, baseName + "_" + pageNumber + ".png");
+                    ImageIOUtil.writeImage(bim, imageFile.getPath(), DPI);
+                    images.add(imageFile);
+                }
+
+                log.info("Converting '{}' finished", originalFileName);
+            }
+        } catch (IOException e) {
+            log.error("Error while converting PDF: {}", e.getMessage());
+            e.printStackTrace();
+        }
+
+        return images;
     }
 }

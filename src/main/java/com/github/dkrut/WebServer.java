@@ -70,10 +70,8 @@ public class WebServer {
         Path tempDir = Files.createTempDirectory("ocr-");
         File tempFile = tempDir.resolve(UUID.randomUUID() + "." + extension).toFile();
 
-        try {
+        try (inputStream) {
             Files.copy(inputStream, tempFile.toPath());
-        } finally {
-            inputStream.close();
         }
 
         Ocr ocr = new Ocr();
@@ -81,21 +79,12 @@ public class WebServer {
 
         if (extension.equals("pdf")) {
             PdfConverter pdfConverter = new PdfConverter();
-            File tempFolder = pdfConverter.pdfConvert(tempFile, fileName, tempDir);
-            if (tempFolder.isDirectory() && tempFolder.exists()) {
-                File[] images = tempFolder.listFiles();
-                if (images != null) {
-                    StringBuilder sb = new StringBuilder();
-                    for (File image : images) {
-                        sb.append(ocr.processFile(image, languages)).append("\n");
-                    }
-                    result = sb.toString();
-                } else {
-                    result = "";
-                }
-            } else {
-                result = "";
+            List<File> images = pdfConverter.convert(tempFile, fileName, tempDir);
+            StringBuilder sb = new StringBuilder();
+            for (File image : images) {
+                sb.append(ocr.processFile(image, languages)).append("\n");
             }
+            result = sb.toString();
         } else {
             result = ocr.processFile(tempFile, languages);
         }
