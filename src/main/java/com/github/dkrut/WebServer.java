@@ -82,11 +82,11 @@ public class WebServer {
             List<File> images = pdfConverter.convert(tempFile, fileName, tempDir);
             StringBuilder sb = new StringBuilder();
             for (File image : images) {
-                sb.append(ocr.processFile(image, languages)).append("\n");
+                sb.append(ocr.processFile(image, languages, tempDir)).append("\n");
             }
             result = sb.toString();
         } else {
-            result = ocr.processFile(tempFile, languages);
+            result = ocr.processFile(tempFile, languages, tempDir);
         }
 
         Files.walk(tempDir).sorted(Comparator.reverseOrder()).forEach(p -> {
