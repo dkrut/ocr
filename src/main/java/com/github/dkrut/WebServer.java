@@ -13,7 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
 
 public class WebServer {
     private static final String[] SUPPORTED_FORMATS = {"pdf", "png", "jpg", "jpeg", "tiff", "tif", "bmp"};
@@ -68,7 +67,7 @@ public class WebServer {
         }
 
         Path tempDir = Files.createTempDirectory("ocr-");
-        File tempFile = tempDir.resolve(UUID.randomUUID() + "." + extension).toFile();
+        File tempFile = tempDir.resolve(fileName).toFile();
 
         try (inputStream) {
             Files.copy(inputStream, tempFile.toPath());
