@@ -169,6 +169,7 @@ public class WebServer {
                         <div class="loading" id="loading">
                             <div class="spinner"></div>
                             <div>Processing...</div>
+                            <div id="loadingStatus" style="margin-top: 8px; font-size: 13px; color: #666; min-height: 18px;"></div>
                         </div>
                         <div class="result-container" id="resultContainer">
                             <div class="result-header">
@@ -253,6 +254,14 @@ public class WebServer {
                             const languages = Array.from(document.querySelectorAll('input[name="language"]:checked')).map(cb => cb.value);
                             formData.append('languages', languages.join('+'));
                 
+                            const loadingStatus = document.getElementById('loadingStatus');
+                            let elapsed = 0;
+                
+                            const timer = setInterval(() => {
+                                elapsed += 30;
+                                loadingStatus.textContent = 'Still working... ' + elapsed + 's elapsed';
+                            }, 30000);
+                
                             loading.classList.add('visible');
                             resultContainer.classList.remove('visible');
                 
@@ -268,7 +277,9 @@ public class WebServer {
                                 resultText.textContent = 'Error: ' + error.message;
                                 resultContainer.classList.add('visible');
                             } finally {
+                                clearInterval(timer);
                                 loading.classList.remove('visible');
+                                loadingStatus.textContent = '';
                             }
                         }
                 
