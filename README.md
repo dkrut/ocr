@@ -10,19 +10,19 @@ OCR application for text recognition from images using Tesseract.
 - Language selection for recognition (English, Russian)
 - Export result (copy, download)
 
-## Requirements
+## Docker
 
-- Java 17
-- Maven
-- Tesseract language data (eng.traineddata, rus.traineddata) in `src/main/resources/tessdata/`
+```bash
+docker build -t ocr-tool .
+docker run -p 8080:8080 ocr-tool
+```
+Open http://localhost:8080
 
-## Run
+### Or local run (needs java 17 & maven installed)
 
 ```bash
 mvn exec:java -D"exec.mainClass=com.github.dkrut.WebServer"
 ```
-
-Open http://localhost:8080
 
 ## Web Interface Usage
 
