@@ -137,6 +137,9 @@ public class WebServer {
                         .spinner { width: 32px; height: 32px; border: 3px solid #eee; border-top-color: #333; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
                         @keyframes spin { to { transform: rotate(360deg); } }
                         .file-name { margin-top: 12px; font-size: 13px; color: #666; }
+                        .footer { margin-top: 24px; text-align: center; font-size: 13px; }
+                        .footer a { color: #666; text-decoration: none; }
+                        .footer a:hover { text-decoration: underline; }
                     </style>
                 </head>
                 <body>
@@ -180,6 +183,12 @@ public class WebServer {
                                 </div>
                             </div>
                             <div class="result-text" id="resultText"></div>
+                        </div>
+                        <div class="footer">
+                            <a href="https://github.com/dkrut/ocr-tool" target="_blank">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.945-3.69-1.26-3.69-1.26-.546-1.365-1.335-1.73-1.335-1.73-1.084-.75.084-.735.084-.735 1.2.085 1.83 1.23 1.83 1.23 1.08 1.845 2.82 1.31 3.51 1 .105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                                GitHub
+                            </a>
                         </div>
                     </div>
                     <script>
