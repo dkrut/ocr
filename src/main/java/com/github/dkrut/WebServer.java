@@ -15,9 +15,11 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 public class WebServer {
     private static final String[] SUPPORTED_FORMATS = {"pdf", "png", "jpg", "jpeg", "tiff", "tif", "bmp"};
+    private static final Map<String, String> LANGUAGES = Config.getInstance().getLanguages();
 
     public static void main(String[] args) {
         Logger log = LoggerFactory.getLogger(WebServer.class);
@@ -62,6 +64,19 @@ public class WebServer {
         return false;
     }
 
+    private static String getLanguageCheckboxes() {
+        StringBuilder sb = new StringBuilder();
+        var entries = LANGUAGES.entrySet();
+        for (Map.Entry<String, String> entry : entries) {
+            String checked = entry.getKey().equals("eng") ? "checked" : "";
+            sb.append("<label style=\"font-size: 14px; color: #333; margin-right: 16px; cursor: pointer;\">")
+                    .append("<input type=\"checkbox\" name=\"language\" value=\"").append(entry.getKey()).append("\" ").append(checked).append("> ")
+                    .append(entry.getValue())
+                    .append("</label>");
+        }
+        return sb.toString();
+    }
+
     private static String processOcr(InputStream inputStream, String fileName, String languages) throws TesseractException, IOException {
         String extension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
 
@@ -102,6 +117,10 @@ public class WebServer {
     }
 
     private static String getHtml() {
+        return getHtmlStatic().replace("PLACEHOLDER_LANGUAGES", getLanguageCheckboxes());
+    }
+
+    private static String getHtmlStatic() {
         return """
                 <!DOCTYPE html>
                 <html lang="en">
@@ -162,12 +181,7 @@ public class WebServer {
                         </div>
                         <div style="margin-top: 16px; text-align: center;">
                             <span style="font-size: 14px; color: #666; margin-right: 12px;">Recognition languages:</span>
-                            <label style="font-size: 14px; color: #333; margin-right: 16px; cursor: pointer;">
-                                <input type="checkbox" name="language" value="eng" checked> English
-                            </label>
-                            <label style="font-size: 14px; color: #333; cursor: pointer;">
-                                <input type="checkbox" name="language" value="rus"> Russian
-                            </label>
+                            PLACEHOLDER_LANGUAGES
                         </div>
                         <div class="loading" id="loading">
                             <div class="spinner"></div>
