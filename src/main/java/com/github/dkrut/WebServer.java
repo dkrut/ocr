@@ -285,8 +285,30 @@ public class WebServer {
                             currentFileName = baseName.replace(/[^a-zA-Z0-9а-яА-ЯёЁ]/g, '_');
                             fileName.textContent = file.name;
                             fileSelected = true;
-                            startOcrBtn.disabled = false;
+                            checkStartOcr();
                         }
+
+                        checkStartOcr();
+
+                        function checkStartOcr() {
+                            const languages = Array.from(document.querySelectorAll('input[name="language"]:checked'));
+                            const hasLanguages = languages.length > 0;
+                            const hasFile = currentFile && fileSelected;
+
+                            if (!hasFile) {
+                                startOcrBtn.title = "Please select a file";
+                            } else if (!hasLanguages) {
+                                startOcrBtn.title = "Please select a recognition languages";
+                            } else {
+                                startOcrBtn.title = "";
+                            }
+
+                            startOcrBtn.disabled = !(hasFile && hasLanguages);
+                        }
+
+                        document.querySelectorAll('input[name="language"]').forEach(cb => {
+                            cb.addEventListener('change', checkStartOcr);
+                        });
                 
                         async function uploadFile() {
                             if (!currentFile) return;
