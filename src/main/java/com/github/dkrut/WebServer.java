@@ -14,15 +14,19 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class WebServer {
+    private static final Logger log = LoggerFactory.getLogger(WebServer.class);
+    private static final String TESSDATA_PATH = "src/main/resources/tessdata";
     private static final String[] SUPPORTED_FORMATS = {"pdf", "png", "jpg", "jpeg", "tiff", "tif", "bmp"};
-    private static final Map<String, String> LANGUAGES = Config.getInstance().getLanguages();
+    private static Map<String, String> languages;
 
     public static void main(String[] args) {
-        Logger log = LoggerFactory.getLogger(WebServer.class);
+        languages = Config.getInstance().getLanguages();
+        validateLanguages(languages);
 
         Javalin.create(config -> {
             config.routes.get("/", ctx -> ctx.html(getHtml()));
@@ -57,6 +61,22 @@ public class WebServer {
         log.info("Server started at http://localhost:8080");
     }
 
+    private static void validateLanguages(Map<String, String> loaded) {
+        Map<String, String> validated = new HashMap<>();
+        for (var entry : loaded.entrySet()) {
+            String traineddata = entry.getKey() + ".traineddata";
+            if (new File(TESSDATA_PATH, traineddata).exists()) {
+                validated.put(entry.getKey(), entry.getValue());
+            } else {
+                log.warn("Language '{}' not found in tessdata, skipping", traineddata);
+            }
+        }
+        if (validated.isEmpty()) {
+            throw new IllegalStateException("No valid languages found in tessdata");
+        }
+        languages = validated;
+    }
+
     private static boolean isFormatSupported(String extension) {
         for (String fmt : SUPPORTED_FORMATS) {
             if (fmt.equals(extension)) return true;
@@ -66,7 +86,7 @@ public class WebServer {
 
     private static String getLanguageCheckboxes() {
         StringBuilder sb = new StringBuilder();
-        var entries = LANGUAGES.entrySet();
+        var entries = languages.entrySet();
         for (Map.Entry<String, String> entry : entries) {
             String checked = entry.getKey().equals("eng") ? "checked" : "";
             sb.append("<label style=\"font-size: 14px; color: #333; margin-right: 16px; cursor: pointer;\">")
